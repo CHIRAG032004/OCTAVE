@@ -5,6 +5,8 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
+.DS_Store
+Thumbs.db
 
 # temp files
 email-function
@@ -73,6 +75,7 @@ web_modules/
 .env
 .env.*
 !.env.example
+*.local
 backend/firebase-service-account.json
 backend/uploads/
 ..png
@@ -117,6 +120,7 @@ dist
 
 # Serverless directories
 .serverless/
+.vercel/
 
 # FuseBox cache
 .fusebox/
@@ -132,6 +136,8 @@ dist
 
 # Stores VSCode versions used for testing VSCode extensions
 .vscode-test
+.idea/
+.vscode/
 
 # yarn v3
 .pnp.*
