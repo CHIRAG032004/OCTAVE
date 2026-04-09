@@ -72,7 +72,7 @@ const initializeFirebase = async () => {
     return db;
   } catch (error) {
     console.error('Firebase initialization error:', error.message);
-    process.exit(1);
+    throw error;
   }
 };
 

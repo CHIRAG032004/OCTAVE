@@ -30,13 +30,25 @@ if (fs.existsSync(frontendDistPath)) {
   app.use(express.static(frontendDistPath));
 }
 
+const ensureDatabaseConnection = async (req, res, next) => {
+  try {
+    await connectDatabase();
+    next();
+  } catch (error) {
+    console.error('Backend initialization error:', error.message);
+    res.status(500).json({ error: 'Backend initialization failed' });
+  }
+};
+
+app.get('/api/status', (req, res) => {
+  res.json(getRuntimeStatus());
+});
+
+app.use('/api', ensureDatabaseConnection);
 app.use('/api', require('./routes/issue'));
 app.use('/api', require('./routes/logs'));
 app.use('/api', require('./routes/upload'));
 app.use('/api', require('./routes/officer'));
-app.get('/api/status', (req, res) => {
-  res.json(getRuntimeStatus());
-});
 
 if (fs.existsSync(frontendDistPath)) {
   app.get(/^(?!\/api|\/uploads).*/, (req, res) => {
@@ -48,8 +60,15 @@ if (fs.existsSync(frontendDistPath)) {
   });
 }
 
-connectDatabase().then(() => {
-  app.listen(port, () => {
-    console.log(`Server is running at http://localhost:${port}`);
+if (!process.env.VERCEL) {
+  connectDatabase().then(() => {
+    app.listen(port, () => {
+      console.log(`Server is running at http://localhost:${port}`);
+    });
+  }).catch((error) => {
+    console.error('Startup failed:', error.message);
+    process.exit(1);
   });
-});
+}
+
+module.exports = app;
