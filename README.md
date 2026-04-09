@@ -2,6 +2,10 @@
 
 OCTAVE is a full-stack civic issue reporting platform with image uploads, geolocation, community voting, and admin workflows.
 
+## Live Demo
+
+- Frontend: `https://octave-1.onrender.com`
+
 ## What It Does
 
 - Citizens can report local problems with a photo and optional note.
@@ -84,6 +88,22 @@ Default local URLs:
 - Frontend: `http://localhost:5173`
 - Backend: `http://localhost:3000`
 
+## Deployment
+
+### Render
+
+This repository includes a [`render.yaml`](./render.yaml) blueprint for deploying both services on Render.
+
+- Backend service: `octave-backend`
+- Frontend service: `octave-frontend`
+- Live frontend URL: `https://octave-1.onrender.com`
+
+Important deployment notes:
+
+- Add backend secrets in Render for `APPWRITE_API_KEY`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET`, `OPENROUTER_API_KEY`, `OPENCAGE_API_KEY`, and `FIREBASE_SERVICE_ACCOUNT`.
+- Add the deployed frontend hostname to your Appwrite Web platform settings.
+- For production, prefer Cloudinary over temporary local upload fallback.
+
 ## Environment Variables
 
 ### Backend
@@ -113,6 +133,14 @@ OPENCAGE_API_KEY=your_opencage_api_key
 VITE_BACKEND_URL=http://localhost:3000
 VITE_APPWRITE_ENDPOINT=https://sgp.cloud.appwrite.io/v1
 VITE_APPWRITE_PROJECT_ID=your_appwrite_project_id
+```
+
+### Frontend On Render
+
+```env
+VITE_BACKEND_URL=https://your-backend-service.onrender.com
+VITE_APPWRITE_ENDPOINT=https://sgp.cloud.appwrite.io/v1
+VITE_APPWRITE_PROJECT_ID=69d7ead700140df655f6
 ```
 
 ## Useful Commands
@@ -145,6 +173,12 @@ npm --prefix frontend run lint
 - Missing OpenRouter key: AI categorization falls back to basic defaults
 - Missing OpenCage key: city/state lookup falls back to empty values
 - Missing Appwrite config: local demo auth mode can be used for testing
+
+## Production Notes
+
+- Render free services can spin down during inactivity, which may delay the first request.
+- Appwrite must allow the deployed frontend hostname in its Web platform settings.
+- Backend uploads should use Cloudinary in production because ephemeral local storage is not durable.
 
 ## Security Notes
 
