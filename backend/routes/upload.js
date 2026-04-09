@@ -23,10 +23,13 @@ if (isCloudinaryConfigured) {
     cloudinary.config(cloudinaryConfig);
 }
 
-const uploadsDir = path.join(__dirname, '..', 'uploads');
-if (!fs.existsSync(uploadsDir)) {
-    fs.mkdirSync(uploadsDir, { recursive: true });
-}
+const uploadsDir = process.env.VERCEL
+    ? path.join(os.tmpdir(), 'octave-uploads')
+    : path.join(__dirname, '..', 'uploads');
+
+const ensureUploadsDir = async () => {
+    await fs.promises.mkdir(uploadsDir, { recursive: true });
+};
 
 // Middleware to handle file uploads
 router.use(fileUpload({
@@ -67,6 +70,7 @@ router.post('/upload', requireAuth(), async (req, res) => {
         }
 
         const filename = `${Date.now()}-${file.md5}${path.extname(file.name)}`;
+        await ensureUploadsDir();
         const destinationPath = path.join(uploadsDir, filename);
         await fs.promises.rename(file.tempFilePath, destinationPath);
 
