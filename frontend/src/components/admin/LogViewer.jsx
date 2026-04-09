@@ -11,6 +11,7 @@ import {
   Trash2
 } from 'lucide-react';
 import Loader from '../extras/Loader';
+import { BASE_API_URL } from '../../utils/baseApiUrl';
 
 const LogViewer = () => {
   const { getToken } = useAuth();
@@ -28,8 +29,6 @@ const LogViewer = () => {
   });
   const [searchQuery, setSearchQuery] = useState('');
   const [pagination, setPagination] = useState({});
-
-  const BASE_API_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000';
 
   const fetchLogs = useCallback(async () => {
     try {
@@ -60,7 +59,7 @@ const LogViewer = () => {
     } finally {
       setLoading(false);
     }
-  }, [BASE_API_URL, filters, getToken, searchQuery]);
+  }, [filters, getToken, searchQuery]);
 
   const fetchStats = useCallback(async () => {
     try {
@@ -73,7 +72,7 @@ const LogViewer = () => {
     } catch (error) {
       console.error('Error fetching log stats:', error);
     }
-  }, [BASE_API_URL, getToken]);
+  }, [getToken]);
 
   const cleanupOldLogs = async () => {
     if (!window.confirm('Are you sure you want to delete logs older than 90 days?')) return;

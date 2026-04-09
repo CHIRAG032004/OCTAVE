@@ -5,6 +5,7 @@ import MapUI from '../components/MapUI';
 import IssuePopup from '../components/IssuePopup';
 import { Search, Filter, MapPin, Calendar, TrendingUp, X, ChevronDown } from 'lucide-react';
 import { formatIssueStatus, normalizeIssueStatus } from '../utils/issueStatus';
+import { BASE_API_URL } from '../utils/baseApiUrl';
 
 const CommunityFeed = () => {
     const [issues, setIssues] = useState([]);
@@ -35,7 +36,6 @@ const CommunityFeed = () => {
     // Debounce timer ref
     const debounceTimer = useRef(null);
     const [isSearching, setIsSearching] = useState(false);
-    const BASE_API_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000';
     
     // Available filter options
     const statusOptions = [        { value: '', label: 'All Status' },
@@ -116,7 +116,7 @@ const CommunityFeed = () => {
         } finally {
             setLoading(false);
         }
-    }, [BASE_API_URL, filters, searchQuery]);
+    }, [filters, searchQuery]);
     
     // Handle filter changes
     const handleFilterChange = (key, value) => {

@@ -1,5 +1,5 @@
 import axios from 'axios';
-const BASE_API_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000';
+import { BASE_API_URL } from './baseApiUrl';
 
 const uploadImage = async (file, token) => {
   try {

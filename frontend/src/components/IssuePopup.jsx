@@ -3,10 +3,10 @@ import { useAuth } from '../hooks/useAuth'
 import { TrendingUp } from 'lucide-react';
 import axios from 'axios';
 import { formatIssueStatus, normalizeIssueStatus } from '../utils/issueStatus';
+import { BASE_API_URL } from '../utils/baseApiUrl';
 
 const IssuePopup = ({issue, setShowIssuePopup}) => {
   const { isSignedIn, getToken, user } = useAuth();
-  const BASE_API_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000';
 
   const [votes, setVotes] = useState(issue.votes || 0);
   const [voted, setVoted] = useState(Boolean(issue.voters?.includes(user?.$id)));

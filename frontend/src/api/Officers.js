@@ -1,5 +1,5 @@
 import axios from "axios";
-const BASE_API_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000';
+import { BASE_API_URL } from "../utils/baseApiUrl";
 
 // Get all officers
 export const getOfficers = async (token, filters = {}) => {

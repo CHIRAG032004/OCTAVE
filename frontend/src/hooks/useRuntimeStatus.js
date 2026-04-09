@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-
-const BASE_API_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000';
+import { BASE_API_URL } from '../utils/baseApiUrl';
 
 export const useRuntimeStatus = () => {
   const [runtimeStatus, setRuntimeStatus] = useState(null);
