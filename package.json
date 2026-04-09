@@ -1,0 +1,19 @@
+{
+  "name": "octave-workspace",
+  "private": true,
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
+  "scripts": {
+    "dev": "npx concurrently \"npm --prefix backend run dev\" \"npm --prefix frontend run dev\"",
+    "dev:backend": "npm --prefix backend run dev",
+    "dev:frontend": "npm --prefix frontend run dev",
+    "install:all": "npm install --workspaces",
+    "start:backend": "npm --prefix backend start",
+    "build:frontend": "npm --prefix frontend run build"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
