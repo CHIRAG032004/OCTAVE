@@ -21,6 +21,11 @@ const Dashboard = () => {
     setShowIssuePopup(true);
   }
 
+  const openIssuesCount = userIssues.filter((issue) => {
+    const status = normalizeIssueStatus(issue.status);
+    return status === 'open' || status === 'pending' || status === 'in progress';
+  }).length;
+
   useEffect(() => {
     if (!user) {
       setUserIssues([]);
@@ -48,7 +53,27 @@ const Dashboard = () => {
       }
     }
 
-    const handleIssuesUpdated = () => {
+    const handleIssuesUpdated = (event) => {
+      const updatedIssue = event.detail;
+
+      if (updatedIssue?._id) {
+        setUserIssues((previousIssues) => {
+          const existingIssueIndex = previousIssues.findIndex((issue) => issue._id === updatedIssue._id);
+
+          if (existingIssueIndex === -1) {
+            return previousIssues;
+          }
+
+          const nextIssues = [...previousIssues];
+          nextIssues[existingIssueIndex] = updatedIssue;
+          return nextIssues;
+        });
+
+        setCurrentIssue((previousIssue) =>
+          previousIssue?._id === updatedIssue._id ? updatedIssue : previousIssue
+        );
+      }
+
       fetchUserIssues();
     };
 
@@ -147,7 +172,7 @@ const Dashboard = () => {
               )}
               <div className="bg-gradient-to-br from-yellow-400 to-yellow-500 shadow-lg px-6 py-6 rounded-xl flex flex-col mb-6">
                 <h2 className="text-base font-semibold text-zinc-700 mb-2">Issues Open</h2>
-                <span className="text-4xl font-extrabold text-zinc-800">{userIssues.filter(issue => normalizeIssueStatus(issue.status) === 'open').length}</span>
+                <span className="text-4xl font-extrabold text-zinc-800">{openIssuesCount}</span>
               </div>
             </section>
             <div className="flex justify-end">

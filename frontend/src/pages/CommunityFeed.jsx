@@ -217,7 +217,7 @@ const CommunityFeed = () => {
                 previousIssue?._id === issueId ? updatedIssue : previousIssue
             );
 
-            notifyIssuesUpdated();
+            notifyIssuesUpdated(updatedIssue);
         } catch (error) {
             console.error('Error resolving issue:', error);
         } finally {

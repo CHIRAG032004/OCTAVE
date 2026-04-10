@@ -19,7 +19,7 @@ router.get('/issues/search', searchIssues);
 router.get('/user/:userId/issues', requireAuth(), getUsersIssues);
 
 router.post('/issues', requireAuth(), createIssue);
-router.patch('/issues/:id/status', requireAuth({ admin: true }), updateIssueStatus);
+router.patch('/issues/:id/status', requireAuth(), updateIssueStatus);
 router.delete('/issues/:id', requireAuth({ admin: true }), deleteIssue);
 router.post('/issues/:id/vote', requireAuth(), voteIssue);
 
