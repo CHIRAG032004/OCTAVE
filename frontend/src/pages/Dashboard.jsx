@@ -7,6 +7,7 @@ import IssuePopup from '../components/IssuePopup'
 import Loader from '../components/extras/Loader'
 import MapUI from '../components/MapUI'
 import { formatIssueStatus, normalizeIssueStatus } from '../utils/issueStatus'
+import { ISSUE_UPDATED_EVENT } from '../utils/issueEvents'
 
 const Dashboard = () => {
   const [userIssues, setUserIssues] = useState([])
@@ -19,7 +20,7 @@ const Dashboard = () => {
     setCurrentIssue(issue);
     setShowIssuePopup(true);
   }
-  
+
   useEffect(() => {
     if (!user) {
       setUserIssues([]);
@@ -47,10 +48,27 @@ const Dashboard = () => {
       }
     }
 
+    const handleIssuesUpdated = () => {
+      fetchUserIssues();
+    };
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        fetchUserIssues();
+      }
+    };
+
+    window.addEventListener(ISSUE_UPDATED_EVENT, handleIssuesUpdated);
+    window.addEventListener('focus', handleIssuesUpdated);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
     fetchUserIssues();
 
     return () => {
       ignore = true;
+      window.removeEventListener(ISSUE_UPDATED_EVENT, handleIssuesUpdated);
+      window.removeEventListener('focus', handleIssuesUpdated);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
   }, [getToken, user])
 

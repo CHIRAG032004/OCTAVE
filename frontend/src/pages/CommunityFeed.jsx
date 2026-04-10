@@ -8,6 +8,7 @@ import { formatIssueStatus, normalizeIssueStatus } from '../utils/issueStatus';
 import { BASE_API_URL } from '../utils/baseApiUrl';
 import { useAuth } from '../hooks/useAuth';
 import { updateIssueStatus } from '../api/Issues';
+import { notifyIssuesUpdated } from '../utils/issueEvents';
 
 const CommunityFeed = () => {
     const [issues, setIssues] = useState([]);
@@ -215,6 +216,8 @@ const CommunityFeed = () => {
             setCurrentIssue((previousIssue) =>
                 previousIssue?._id === issueId ? updatedIssue : previousIssue
             );
+
+            notifyIssuesUpdated();
         } catch (error) {
             console.error('Error resolving issue:', error);
         } finally {
