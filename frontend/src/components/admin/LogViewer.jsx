@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import Loader from '../extras/Loader';
 import { BASE_API_URL } from '../../utils/baseApiUrl';
+import { formatDateTime } from '../../utils/date';
 
 const LogViewer = () => {
   const { getToken } = useAuth();
@@ -268,7 +269,7 @@ const LogViewer = () => {
                     <td className="px-4 py-3 text-sm text-gray-900">
                       <div className="flex items-center gap-2">
                         <Clock className="w-4 h-4 text-gray-400" />
-                        {new Date(log.createdAt).toLocaleString()}
+                        {formatDateTime(log.createdAt)}
                       </div>
                     </td>
                     <td className="px-4 py-3 text-sm">

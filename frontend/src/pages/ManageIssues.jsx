@@ -4,6 +4,7 @@ import IssuePopup from '../components/IssuePopup.jsx'
 import { useAuth } from '../hooks/useAuth';
 import { Search, Filter, X } from 'lucide-react';
 import { formatIssueStatus, normalizeIssueStatus } from '../utils/issueStatus';
+import { formatDate } from '../utils/date';
 
 const ManageIssues = () => {
   const [issues, setIssues] = useState([])
@@ -235,7 +236,7 @@ const ManageIssues = () => {
                   </div>
 
                   <div className='text-xs text-zinc-500'>
-                    {issue.createdAt ? new Date(issue.createdAt).toLocaleDateString() : null}
+                    {formatDate(issue.createdAt, undefined, '')}
                   </div>
                 </div>
               </li>

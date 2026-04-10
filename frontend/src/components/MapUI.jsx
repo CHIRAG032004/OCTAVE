@@ -3,6 +3,7 @@ import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import { formatIssueStatus, normalizeIssueStatus } from "../utils/issueStatus";
+import { formatDate } from "../utils/date";
 
 const MapUI = ({ issues }) => {
     const mapRef = useRef(null);
@@ -84,7 +85,7 @@ const MapUI = ({ issues }) => {
                                 <Popup>
                                     <div>
                                         <strong>{issue.title}</strong><br />
-                                        <strong>Date posted:</strong> {issue.createdAt ? new Date(issue.createdAt).toLocaleDateString() : "N/A"}<br />
+                                        <strong>Date posted:</strong> {formatDate(issue.createdAt)}<br />
                                         <strong>Status:</strong> {formatIssueStatus(issue.status)}<br />
                                         {issue.imageUrl && (
                                             <div style={{ marginTop: "8px" }}>

@@ -9,6 +9,7 @@ import { BASE_API_URL } from '../utils/baseApiUrl';
 import { useAuth } from '../hooks/useAuth';
 import { updateIssueStatus } from '../api/Issues';
 import { notifyIssuesUpdated } from '../utils/issueEvents';
+import { formatDate } from '../utils/date';
 
 const CommunityFeed = () => {
     const [issues, setIssues] = useState([]);
@@ -407,7 +408,7 @@ const CommunityFeed = () => {
                                                 </div>
                                                 <div className="flex items-center gap-1 text-xs text-zinc-500">
                                                     <Calendar className="w-3 h-3" />
-                                                    {new Date(issue.createdAt).toLocaleDateString('en-US', {
+                                                    {formatDate(issue.createdAt, {
                                                         month: 'short',
                                                         day: 'numeric'
                                                     })}

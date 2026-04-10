@@ -14,6 +14,7 @@ import {
 import { Bar, Pie, Line } from 'react-chartjs-2';
 import { BarChart3, PieChart, TrendingUp, Calendar } from 'lucide-react';
 import { normalizeIssueStatus } from '../../utils/issueStatus';
+import { getDate, formatDate } from '../../utils/date';
 
 // Register Chart.js components
 ChartJS.register(
@@ -81,7 +82,10 @@ const IssueChart = ({ issues }) => {
     const monthlyCount = {};
     
     issues.forEach(issue => {
-      const date = new Date(issue.createdAt);
+      const date = getDate(issue.createdAt);
+      if (!date) {
+        return;
+      }
       const monthYear = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
       monthlyCount[monthYear] = (monthlyCount[monthYear] || 0) + 1;
     });
@@ -94,7 +98,7 @@ const IssueChart = ({ issues }) => {
     const formattedLabels = sortedMonths.map(month => {
       const [year, monthNum] = month.split('-');
       const date = new Date(year, monthNum - 1);
-      return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+      return formatDate(date, { month: 'short', year: 'numeric' });
     });
 
     return {
