@@ -6,12 +6,16 @@ import IssuePopup from '../components/IssuePopup';
 import { Search, Filter, MapPin, Calendar, TrendingUp, X, ChevronDown } from 'lucide-react';
 import { formatIssueStatus, normalizeIssueStatus } from '../utils/issueStatus';
 import { BASE_API_URL } from '../utils/baseApiUrl';
+import { useAuth } from '../hooks/useAuth';
+import { updateIssueStatus } from '../api/Issues';
 
 const CommunityFeed = () => {
     const [issues, setIssues] = useState([]);
     const [loading, setLoading] = useState(false);
     const [showIssuePopup, setShowIssuePopup] = useState(false);
     const [currentIssue, setCurrentIssue] = useState(null);
+    const [updatingIssueId, setUpdatingIssueId] = useState(null);
+    const { user, isSignedIn, getToken, isAdmin } = useAuth();
     
     // Filter and search state
     const [searchInput, setSearchInput] = useState(''); // For immediate UI updates
@@ -61,6 +65,13 @@ const CommunityFeed = () => {
         setCurrentIssue(issue);
         setShowIssuePopup(true);
     }
+
+    const canResolveIssue = useCallback((issue) => {
+        if (!isSignedIn) return false;
+        const status = normalizeIssueStatus(issue.status);
+        if (status === 'resolved') return false;
+        return Boolean(isAdmin() || user?.$id === issue.userId);
+    }, [isAdmin, isSignedIn, user]);
     
     const fetchIssues = useCallback(async () => {
         try {
@@ -185,6 +196,30 @@ const CommunityFeed = () => {
     // Handle pagination
     const handlePageChange = (newPage) => {
         setFilters(prev => ({ ...prev, page: newPage }));
+    };
+
+    const handleResolveIssue = async (issueId) => {
+        try {
+            setUpdatingIssueId(issueId);
+            const token = await getToken();
+            if (!token) {
+                return;
+            }
+
+            const updatedIssue = await updateIssueStatus(issueId, 'resolved', token);
+
+            setIssues((previousIssues) =>
+                previousIssues.map((issue) => (issue._id === issueId ? updatedIssue : issue))
+            );
+
+            setCurrentIssue((previousIssue) =>
+                previousIssue?._id === issueId ? updatedIssue : previousIssue
+            );
+        } catch (error) {
+            console.error('Error resolving issue:', error);
+        } finally {
+            setUpdatingIssueId(null);
+        }
     };
 
     useEffect(() => {
@@ -406,6 +441,22 @@ const CommunityFeed = () => {
                                                     <span>{issue.votes || 0} votes</span>
                                                 </div>
                                             </div>
+
+                                            {canResolveIssue(issue) && (
+                                                <div className="mt-3 pt-3 border-t border-zinc-100">
+                                                    <button
+                                                        type="button"
+                                                        onClick={(event) => {
+                                                            event.stopPropagation();
+                                                            handleResolveIssue(issue._id);
+                                                        }}
+                                                        disabled={updatingIssueId === issue._id}
+                                                        className="w-full rounded-md bg-green-600 px-3 py-2 text-sm font-medium text-white transition hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-60"
+                                                    >
+                                                        {updatingIssueId === issue._id ? 'Resolving...' : 'Mark as Solved'}
+                                                    </button>
+                                                </div>
+                                            )}
                                         </div>
                                     ))}
                                 </div>

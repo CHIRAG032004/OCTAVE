@@ -150,11 +150,20 @@ const updateIssueStatus = async (req, res) => {
             return res.status(404).json({ error: 'Issue not found' });
         }
 
+        const isAdmin = Boolean(req.auth?.isAdmin);
+        const isOwner = req.auth?.userId === issue.userId;
+
+        if (!isAdmin) {
+            if (!isOwner || status !== 'resolved') {
+                return res.status(403).json({ error: 'You are not allowed to update this issue status' });
+            }
+        }
+
         const previousStatus = issue.status;
         const updatedIssue = await Issue.update(id, { status });
 
         await logAction({
-            userType: 'admin',
+            userType: isAdmin ? 'admin' : 'user',
             userId: req.auth?.userId || 'system',
             action: 'Update Issue Status',
             issueId: id,
