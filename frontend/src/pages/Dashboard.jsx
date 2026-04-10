@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { getUsersIssues } from '../api/Issues'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useAuth } from '../hooks/useAuth';
 import { SignedIn, SignedOut, SignInButton } from '../components/AuthComponents';
 import IssuePopup from '../components/IssuePopup'
@@ -14,6 +14,7 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(false);
   const [showIssuePopup, setShowIssuePopup] = useState(false);
   const [currentIssue, setCurrentIssue] = useState(null);
+  const isFetchingRef = useRef(false);
 
   const handleShowIssuePopup = (issue) => {
     setCurrentIssue(issue);
@@ -28,9 +29,16 @@ const Dashboard = () => {
 
     let ignore = false;
 
-    const fetchUserIssues = async () => {
+    const fetchUserIssues = async ({ skipLoader = false } = {}) => {
+      if (isFetchingRef.current) {
+        return;
+      }
+
       try {
-        setLoading(true);
+        isFetchingRef.current = true;
+        if (!skipLoader) {
+          setLoading(true);
+        }
         const token = await getToken();
         const userId = user.$id;
         const issues = await getUsersIssues(token, userId)
@@ -41,6 +49,7 @@ const Dashboard = () => {
         console.error("Error fetching user issues:", error)
       }
       finally {
+        isFetchingRef.current = false;
         if (!ignore) {
           setLoading(false);
         }
@@ -49,8 +58,28 @@ const Dashboard = () => {
 
     fetchUserIssues();
 
+    const handleWindowFocus = () => {
+      fetchUserIssues({ skipLoader: true });
+    };
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        fetchUserIssues({ skipLoader: true });
+      }
+    };
+
+    const intervalId = window.setInterval(() => {
+      fetchUserIssues({ skipLoader: true });
+    }, 30000);
+
+    window.addEventListener('focus', handleWindowFocus);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
     return () => {
       ignore = true;
+      window.clearInterval(intervalId);
+      window.removeEventListener('focus', handleWindowFocus);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
   }, [getToken, user])
 
