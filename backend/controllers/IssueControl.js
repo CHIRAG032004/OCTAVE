@@ -95,10 +95,12 @@ const getUsersIssues = async (req, res) => {
             return res.status(403).json({ error: 'You can only view your own issues' });
         }
 
-        const issues = await Issue.collection().where('userId', '==', userId).orderBy('createdAt', 'desc').get();
-        const userIssues = issues.docs.map((doc) => ({ _id: doc.id, ...doc.data() }));
+        const userIssues = (await Issue.find({ userId }))
+            .sort((left, right) => new Date(right.createdAt || 0) - new Date(left.createdAt || 0));
+
         res.status(200).json(userIssues);
     } catch (error) {
+        console.error('Error fetching user issues:', error.message);
         res.status(500).json({ error: error.message });
     }
 };
